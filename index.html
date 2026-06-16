@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบฟอร์มระบบลงทะเบียน - Front-end Course</title>
+    <style>
+        /* รีเซ็ตค่าพื้นฐาน */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Prompt', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e0eafc, #cfdef3);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* กล่องฟอร์มหลัก */
+        .form-container {
+            background-color: #ffffff;
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header h2 {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .form-header p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        /* จัดการกลุ่มอินพุต */
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* ตกแต่ง Input พื้นฐาน (Text, Password, Email, Select, Textarea) */
+        .input-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #dcdde1;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #2c3e50;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
+        }
+
+        textarea.input-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* ตกแต่ง Radio และ Checkbox */
+        .radio-group, .checkbox-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 5px;
+        }
+
+        .radio-item, .checkbox-item {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 15px;
+            color: #2c3e50;
+        }
+
+        .radio-item input, .checkbox-item input {
+            margin-right: 8px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* ปุ่ม Submit */
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: #3498db;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        /* สไตล์ของข้อความแจ้งเตือนความผิดพลาด (Validation) */
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none; /* ซ่อนไว้ก่อน จะแสดงเมื่อผิดพลาด */
+        }
+
+        .input-error {
+            border-color: #e74c3c !important;
+            background-color: #fdf2f2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <div class="form-header">
+            <h2>ลงทะเบียนเข้าเรียนคอร์ส Front-end</h2>
+            <p>กรุณากรอกข้อมูลให้ครบถ้วนเพื่อสิทธิ์ในการเข้าใช้งานระบบเรียนออนไลน์</p>
+        </div>
+
+        <form id="registrationForm" onsubmit="return validateForm(event)">
+            
+            <div class="form-group">
+                <label for="fullname">ชื่อ - นามสกุล <span style="color: red;">*</span></label>
+                <input type="text" id="fullname" class="input-control" placeholder="สมชาย สายโค้ด">
+                <div id="nameError" class="error-message">กรุณากรอกชื่อ-นามสกุลของคุณ</div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">อีเมลสำหรับเข้าเรียน <span style="color: red;">*</span></label>
+                <input type="email" id="email" class="input-control" placeholder="example@email.com">
+                <div id="emailError" class="error-message">กรุณากรอกอีเมลให้ถูกต้องตามรูปแบบ (เช่น name@domain.com)</div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">รหัสผ่านบัญชีผู้ใช้ <span style="color: red;">*</span></label>
+                <input type="password" id="password" class="input-control" placeholder="อย่างน้อย 6 ตัวอักษร">
+                <div id="passwordError" class="error-message">รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร</div>
+            </div>
+
+            <div class="form-group">
+                <label for="courseLevel">ระดับพื้นฐานที่มี</label>
+                <select id="courseLevel" class="input-control">
+                    <option value="beginner">ไม่มีพื้นฐานเลย (Beginner)</option>
+                    <option value="intermediate">พอเขียน HTML/CSS ได้บ้าง (Intermediate)</option>
+                    <option value="advanced">เข้าใจ JavaScript แล้ว (Advanced)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>ช่วงเวลาที่สะดวกเรียน</label>
+                <div class="radio-group">
+                    <label class="radio-item">
+                        <input type="radio" name="learningTime" value="morning" checked> วันธรรมดา (ช่วงเย็น)
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="learningTime" value="weekend"> วันเสาร์ - อาทิตย์
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>เทคโนโลยีที่สนใจเพิ่มเติม (เลือกได้มากกว่า 1)</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="interest" value="react"> React
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="interest" value="vue"> Vue.js
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="interest" value="tailwind"> Tailwind CSS
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="comments">เป้าหมายหรือสิ่งที่คาดหวังจากวิชานี้</label>
+                <textarea id="comments" class="input-control" placeholder="พิมพ์ข้อความของคุณที่นี่..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">ส่งข้อมูลลงทะเบียน</button>
+
+        </form>
+    </div>
+
+    <script>
+        function validateForm(event) {
+            // ป้องกันไม่ให้ฟอร์มรีเฟรชหน้าจอทันทีเมื่อกดปุ่มส่ง
+            event.preventDefault();
+
+            let isValid = true;
+
+            // ดึงค่าจาก HTML Elements
+            const fullname = document.getElementById('fullname');
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+
+            // ดึงตัวแจ้งเตือนข้อผิดพลาด
+            const nameError = document.getElementById('nameError');
+            const emailError = document.getElementById('emailError');
+            const passwordError = document.getElementById('passwordError');
+
+            // --- [Validation จุดที่ 1: ตรวจสอบชื่อ-นามสกุล] ---
+            if (fullname.value.trim() === "") {
+                fullname.classList.add('input-error');
+                nameError.style.display = 'block';
+                isValid = false;
+            } else {
+                fullname.classList.remove('input-error');
+                nameError.style.display = 'none';
+            }
+
+            // --- [Validation จุดที่ 2: ตรวจสอบอีเมลด้วย Regex Pattern] ---
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (!emailPattern.test(email.value)) {
+                email.classList.add('input-error');
+                emailError.style.display = 'block';
+                isValid = false;
+            } else {
+                email.classList.remove('input-error');
+                emailError.style.display = 'none';
+            }
+
+            // --- [Validation จุดที่ 3: ตรวจสอบความยาวรหัสผ่าน] ---
+            if (password.value.length < 6) {
+                password.classList.add('input-error');
+                passwordError.style.display = 'block';
+                isValid = false;
+            } else {
+                password.classList.remove('input-error');
+                passwordError.style.display = 'none';
+            }
+
+            // หากผ่านเงื่อนไขการตรวจสอบทั้งหมด
+            if (isValid) {
+                alert('🎉 ยินดีด้วย! คุณลงทะเบียนเรียนสำเร็จเรียบร้อยแล้ว');
+                // สามารถสั่งให้ส่งข้อมูลไป Backend ต่อได้ตรงนี้ (เช่น document.getElementById('registrationForm').submit();)
+            }
+
+            return isValid;
+        }
+    </script>
+</body>
+</html>
